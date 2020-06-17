@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="标签, Captain">
+    <meta name="keywords" content="神经网络, Captain">
     <meta name="description" content="但行好事 莫问前程">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>标签 | Captain</title>
+    <title>神经网络 | Captain</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -308,12 +308,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/15.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/4.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">标签</h1>
+                    <h1 class="description center-align post-title">神经网络</h1>
                 </div>
             </div>
         </div>
@@ -428,9 +428,13 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/AI/">
+                                <span class="chip bg-color">AI</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
@@ -442,7 +446,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-05-26
+                    2020-06-18
                 </div>
                 
 
@@ -458,7 +462,117 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                
+                <h2 id="神经网络"><a href="#神经网络" class="headerlink" title="神经网络"></a>神经网络</h2><h3 id="初级神经网络"><a href="#初级神经网络" class="headerlink" title="初级神经网络"></a>初级神经网络</h3><pre class=" language-bash"><code class="language-bash"><span class="token function">import</span> numpy as np  <span class="token comment" spellcheck="true">#是一个科学计算库</span>
+<span class="token function">import</span> matplotlib.pyplot as plt <span class="token comment" spellcheck="true"># 一个画图的工具库</span>
+<span class="token function">import</span> h5py  <span class="token comment" spellcheck="true">#用来加载我们的训练数据集的。我们的数据集保存为HDF格式</span>
+<span class="token function">import</span> skimage.transform as tf <span class="token comment" spellcheck="true">#用来缩放我们的图片</span>
+
+def load_dataset<span class="token punctuation">(</span><span class="token punctuation">)</span>:
+    train_dataset<span class="token operator">=</span>h5py.File<span class="token punctuation">(</span><span class="token string">'datasets/train_catvnoncat.h5'</span>,<span class="token string">"r"</span><span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">#加载训练数据</span>
+    train_set_x_orig<span class="token operator">=</span>np.array<span class="token punctuation">(</span>train_dataset<span class="token punctuation">[</span><span class="token string">"train_set_x"</span><span class="token punctuation">]</span><span class="token punctuation">[</span>:<span class="token punctuation">]</span><span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">#加载图片中的特征数据</span>
+    train_set_y_orig<span class="token operator">=</span>np.array<span class="token punctuation">(</span>train_dataset<span class="token punctuation">[</span><span class="token string">"train_set_y"</span><span class="token punctuation">]</span><span class="token punctuation">[</span>:<span class="token punctuation">]</span><span class="token punctuation">)</span>   <span class="token comment" spellcheck="true">#加载图片中的标签数据</span>
+
+    test_dataset<span class="token operator">=</span>h5py.File<span class="token punctuation">(</span><span class="token string">'datasets/test_catvnoncat.h5'</span>,<span class="token string">"r"</span><span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">#加载测试数据</span>
+    test_set_x_orig<span class="token operator">=</span>np.array<span class="token punctuation">(</span>test_dataset<span class="token punctuation">[</span><span class="token string">"test_set_x"</span><span class="token punctuation">]</span><span class="token punctuation">[</span>:<span class="token punctuation">]</span><span class="token punctuation">)</span>
+    test_set_y_orig<span class="token operator">=</span>np.array<span class="token punctuation">(</span>test_dataset<span class="token punctuation">[</span><span class="token string">"test_set_y"</span><span class="token punctuation">]</span><span class="token punctuation">[</span>:<span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+    classes<span class="token operator">=</span>np.array<span class="token punctuation">(</span>test_dataset<span class="token punctuation">[</span><span class="token string">"list_classes"</span><span class="token punctuation">]</span><span class="token punctuation">[</span>:<span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+    train_set_y_orig<span class="token operator">=</span>train_set_y_orig.reshape<span class="token variable"><span class="token punctuation">((</span><span class="token number">1</span><span class="token punctuation">,</span>train_set_y_orig.shape[<span class="token number">0</span>]<span class="token punctuation">))</span></span>
+    test_set_y_orig<span class="token operator">=</span>test_set_y_orig.reshape<span class="token variable"><span class="token punctuation">((</span><span class="token number">1</span><span class="token punctuation">,</span>test_set_y_orig.shape[<span class="token number">0</span>]<span class="token punctuation">))</span></span>
+
+    <span class="token keyword">return</span> train_set_x_orig, train_set_y_orig, test_set_x_orig, test_set_y_orig, classes
+
+train_set_x_orig, train_set_y, test_set_x_orig, test_set_y, classes <span class="token operator">=</span> load_dataset<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+index<span class="token operator">=</span>1
+
+plt.imshow<span class="token punctuation">(</span>train_set_x_orig<span class="token punctuation">[</span>index<span class="token punctuation">]</span><span class="token punctuation">)</span>
+print <span class="token punctuation">(</span><span class="token string">"标签为"</span> + str<span class="token punctuation">(</span>train_set_y<span class="token punctuation">[</span>:, index<span class="token punctuation">]</span><span class="token punctuation">)</span> + <span class="token string">", 这是一个'"</span> + classes<span class="token punctuation">[</span>np.squeeze<span class="token punctuation">(</span>train_set_y<span class="token punctuation">[</span>:, index<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">]</span>.decode<span class="token punctuation">(</span><span class="token string">"utf-8"</span><span class="token punctuation">)</span> +  <span class="token string">"' 图片."</span><span class="token punctuation">)</span></code></pre>
+<p><img src="/images/1.jpg" alt="alt"></p>
+<pre><code>#上面train_set_x_orig的各维度的含义分别是(样本数，图片宽，图片长，3个RGB通道)
+m_train=train_set_x_orig.shape[0]
+m_test=test_set_x_orig.shape[0]
+m_px=test_set_x_orig.shape[1]
+
+train_set_x_flatten=train_set_x_orig.reshape(train_set_x_orig.shape[0],-1).T
+test_set_x_flatten=test_set_x_orig.reshape(test_set_x_orig.shape[0],-1).T
+
+train_set_x=train_set_x_flatten/255
+test_set_x=test_set_x_flatten/255
+print(test_set_x.shape)
+
+def sigmoid(z):
+    s=1/(1+np.exp(-z))
+    return s
+
+def initialize_with_zeros(dim):
+    w=np.zeros((dim,1))
+    b=0
+    return w,b
+
+def propagate(w,b,X,Y):
+    m=X.shape[1];
+    A=sigmoid(np.dot(w.T,X)+b)
+    cost=np.sum(-(Y*np.log(A)+(1-Y)*np.log(1-A)))/m
+    dZ=A-Y
+    dw=np.dot(X,dZ.T)/m
+    db=np.sum(dZ)/m
+    grads={&quot;dw&quot;:dw,
+          &quot;db&quot;:db }
+    return cost,grads
+
+def optimize(w,b,X,Y,num_iterations, learning_rate, print_cost = False):
+    costs=[]
+    for i in range(num_iterations):
+        cost,grads=propagate(w,b,X,Y);
+        dw=grads[&quot;dw&quot;]
+        db=grads[&quot;db&quot;]
+        w=w-learning_rate*dw
+        b=b-learning_rate*db
+        if i % 100== 0:
+            costs.append(cost)
+            if print_cost:
+                print(&quot;优化%i次后成本是: %f&quot; %(i, cost))
+    params={&quot;w&quot;:w,&quot;b&quot;:b}
+    return params,costs
+
+def predict(w,b,X):
+    m=X.shape[1]
+    Y_prediction=np.zeros((1,m))
+    A=sigmoid(np.dot(w.T,X)+b)
+    for i in range(A.shape[1]):
+        if A[0,i]&gt;=0.5:
+            Y_prediction[0,i]=1;
+    return Y_prediction
+
+def model(X_train,Y_train,X_test,Y_test,num_iterations=2000,learning_rate=0.5,print_cost=False):
+    w , b=initialize_with_zeros(X_train.shape[0])
+    paramters,costs=optimize(w,b,X_train,Y_train,num_iterations, learning_rate, print_cost)
+    w =paramters[&quot;w&quot;]
+    b=paramters[&quot;b&quot;]
+    Y_prediction_train=predict(w,b,X_train)
+    Y_prediction_test=predict(w,b,X_test)
+    print(&quot;对训练图片的预测准确率为: {}%&quot;.format(100 - np.mean(np.abs(Y_prediction_train - Y_train)) * 100))
+    print(&quot;对测试图片的预测准确率为: {}%&quot;.format(100 - np.mean(np.abs(Y_prediction_test - Y_test)) * 100))
+
+
+    d = {&quot;costs&quot;: costs,
+         &quot;Y_prediction_test&quot;: Y_prediction_test, 
+         &quot;Y_prediction_train&quot; : Y_prediction_train,  #这两个得预测值都是两个行向量，从左到右对应着每个样本得预测值。 
+         &quot;w&quot; : w, 
+         &quot;b&quot; : b,
+         &quot;learning_rate&quot; : learning_rate,
+         &quot;num_iterations&quot;: num_iterations}
+
+    return d
+
+d=model(train_set_x, train_set_y, test_set_x, test_set_y, num_iterations = 1000, learning_rate = 0.005, print_cost = True)
+</code></pre><p>输出：<br>    优化0次后成本是: 0.693147<br>    优化100次后成本是: 0.584508<br>    优化200次后成本是: 0.466949<br>    优化300次后成本是: 0.376007<br>    优化400次后成本是: 0.331463<br>    优化500次后成本是: 0.303273<br>    优化600次后成本是: 0.279880<br>    优化700次后成本是: 0.260042<br>    优化800次后成本是: 0.242941<br>    优化900次后成本是: 0.228004<br>    对训练图片的预测准确率为: 96.65071770334929%<br>    对测试图片的预测准确率为: 72.0%</p>
+<pre><code>index = 8
+plt.imshow(test_set_x[:,index].reshape((64, 64, 3)))
+print (&quot;这张图的标签是 &quot; + str(test_set_y[0,index]) + &quot;, 预测结果是 &quot; + str(int(d[&quot;Y_prediction_test&quot;][0,index])))</code></pre><p><img src="/images/2.jpg" alt="alt"></p>
+
             </div>
             <hr/>
 
@@ -483,7 +597,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://yoursite.com/tags/index.html">http://yoursite.com/tags/index.html</a>
+                    <a href="http://yoursite.com/2020/06/18/ai/">http://yoursite.com/2020/06/18/ai/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -520,7 +634,11 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/AI/">
+                                    <span class="chip bg-color">AI</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -691,24 +809,26 @@
                 <i class="far fa-dot-circle"></i>&nbsp;本篇
             </div>
             <div class="card">
-                <a href="/tags/index.html">
+                <a href="/2020/06/18/ai/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="标签">
+                        <img src="/medias/featureimages/4.jpg" class="responsive-img" alt="神经网络">
                         
-                        <span class="card-title">标签</span>
+                        <span class="card-title">神经网络</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            神经网络初级神经网络import numpy as np  #是一个科学计算库
+import matplotlib.pyplot as plt # 一个画图的工具库
+import h5py  #用来加载我们的训练数据集的。我们的数据集保存为
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-26
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-06-18
                             </span>
                         <span class="publish-author">
                             
@@ -720,22 +840,30 @@
                 </div>
 
                 
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/AI/">
+                        <span class="chip bg-color">AI</span>
+                    </a>
+                    
+                </div>
+                
             </div>
         </div>
         
         
         <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="far fa-dot-circle"></i>
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/tags/index.html">
+                <a href="/2020/06/13/article-title/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="标签">
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="Felix的博客">
                         
-                        <span class="card-title">标签</span>
+                        <span class="card-title">Felix的博客</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -746,7 +874,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-26
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-06-13
                             </span>
                         <span class="publish-author">
                             
@@ -756,7 +884,6 @@
                         </span>
                     </div>
                 </div>
-
                 
             </div>
         </div>
